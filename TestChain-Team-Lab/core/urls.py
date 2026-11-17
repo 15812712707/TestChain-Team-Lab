@@ -1,0 +1,46 @@
+from django.contrib.auth.views import LogoutView
+from django.urls import path
+
+from . import accounts, attestation, audit_log, cases, defects, projects, reports, views
+
+
+urlpatterns = [
+    path("health/", views.health, name="health"),
+    path("login/", accounts.sign_in, name="login"),
+    path("register/", accounts.register, name="register"),
+    path("logout/", LogoutView.as_view(), name="logout"),
+    path("account/password/", accounts.password_change, name="password_change"),
+    path("", projects.dashboard, name="dashboard"),
+    path("projects/new/", projects.project_create, name="project_create"),
+    path("projects/<int:project_id>/", projects.project_detail, name="project"),
+    path("projects/<int:project_id>/edit/", projects.project_edit, name="project_edit"),
+    path("projects/<int:project_id>/archive/", projects.project_archive, name="project_archive"),
+    path("projects/<int:project_id>/versions/new/", projects.version_create, name="version_create"),
+    path("projects/<int:project_id>/cases/", cases.case_list, name="cases"),
+    path("projects/<int:project_id>/cases/new/", cases.case_edit, name="case_create"),
+    path("projects/<int:project_id>/cases/import/", cases.case_import, name="case_import"),
+    path("projects/<int:project_id>/cases/template/", cases.case_template, name="case_template"),
+    path("projects/<int:project_id>/versions/compare/", reports.version_compare, name="version_compare"),
+    path("projects/<int:project_id>/cases/<int:case_id>/edit/", cases.case_edit, name="case_edit"),
+    path("projects/<int:project_id>/cases/<int:case_id>/archive/", cases.case_archive, name="case_archive"),
+    path("projects/<int:project_id>/cases/<int:case_id>/execute/", cases.execute_case, name="execute"),
+    path("projects/<int:project_id>/executions/", cases.execution_list, name="executions"),
+    path("projects/<int:project_id>/defects/", defects.defect_list, name="defects"),
+    path("projects/<int:project_id>/defects/new/", defects.defect_edit, name="defect_create"),
+    path("projects/<int:project_id>/defects/<int:defect_id>/edit/", defects.defect_edit, name="defect_edit"),
+    path("projects/<int:project_id>/members/", projects.members, name="members"),
+    path("projects/<int:project_id>/members/<int:member_id>/remove/", projects.member_remove, name="member_remove"),
+    path("projects/<int:project_id>/reports/", reports.report_list, name="reports"),
+    path("projects/<int:project_id>/reports/upload/", reports.report_create, name="report_upload"),
+    path("projects/<int:project_id>/reports/generate/", reports.report_create, {"generate": True}, name="report_generate"),
+    path("projects/<int:project_id>/reports/<int:report_id>/", reports.report_detail, name="report"),
+    path("projects/<int:project_id>/reports/<int:report_id>/download/", reports.report_download, name="report_download"),
+    path("projects/<int:project_id>/reports/<int:report_id>/evidence/", attestation.report_evidence, name="report_evidence"),
+    path("projects/<int:project_id>/reports/<int:report_id>/anchor/", attestation.report_anchor, name="report_anchor"),
+    path("projects/<int:project_id>/reports/<int:report_id>/verify/", attestation.report_verify, name="report_verify"),
+    path("projects/<int:project_id>/chain/", attestation.chain_browser, name="chain"),
+    path("projects/<int:project_id>/chain/check/", attestation.chain_check, name="chain_check"),
+    path("projects/<int:project_id>/events/", audit_log.events, name="events"),
+    path("projects/<int:project_id>/export/", cases.export_csv, name="export_csv"),
+    path("api/projects/<int:project_id>/", projects.project_api, name="project_api"),
+]
