@@ -105,6 +105,7 @@ def execute_case(request, project, case_id):
             execution.case_snapshot = {"title": case.title, "steps": case.steps, "expected": case.expected, "priority": case.priority}
             execution.save()
             audit(project, request.user, f"执行用例 #{case.pk}：{execution.get_status_display()}")
+        messages.success(request, "执行记录已保存")
         return redirect("executions", project_id=project.pk)
     return render(request, "execute.html", {"project": project, "case": case, "form": form})
 

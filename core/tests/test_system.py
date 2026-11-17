@@ -115,6 +115,10 @@ class SystemTests(TestCase):
         self.assertEqual(execution.case_snapshot["title"], "登录")
         self.assertEqual(Case.objects.get(pk=self.case.pk).title, "新标题")
 
+    def test_execution_success_message(self):
+        response = self.client.post(self.url("execute", self.case.pk), {"version": self.version.pk, "status": "passed", "actual": "成功"}, follow=True)
+        self.assertContains(response, "执行记录已保存")
+
     def test_cross_project_version_cannot_be_used(self):
         response = self.client.post(self.url("execute", self.case.pk), {"version": self.other_version.pk, "status": "passed", "actual": "成功"})
         self.assertEqual(response.status_code, 200)
