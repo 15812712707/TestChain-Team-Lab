@@ -4,6 +4,7 @@ import io
 from pathlib import Path
 
 from django.conf import settings
+from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -42,6 +43,8 @@ def report_create(request, project, generate=False):
         filename = "test-report.txt" if generate else form.cleaned_data["file"].name
         try:
             report = save_report(project, version, title, filename, data, request.user, generate)
+            if not generate:
+                messages.success(request, "测试报告上传成功")
             return redirect("report", project_id=project.pk, report_id=report.pk)
         except ValidationError as error:
             form.add_error(None, error)
