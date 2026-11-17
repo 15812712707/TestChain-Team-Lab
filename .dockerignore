@@ -1,0 +1,12 @@
+.git
+.env
+.local-secret
+.classroom
+.venv
+__pycache__
+*.sqlite3
+staticfiles
+backups
+tests
+artifacts
+.coverage

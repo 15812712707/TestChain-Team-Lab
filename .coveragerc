@@ -1,0 +1,13 @@
+[run]
+branch = True
+source = core
+omit =
+    core/tests/*
+    core/migrations/*
+
+[report]
+show_missing = True
+skip_empty = True
+
+[html]
+directory = artifacts/coverage-html

@@ -1,0 +1,54 @@
+name: TestChain CI
+on: [push, pull_request]
+jobs:
+  sqlite:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: python manage.py check
+      - run: python manage.py makemigrations --check --dry-run
+      - run: python manage.py collectstatic --noinput
+      - run: python -m coverage run manage.py test core.tests -v 2
+      - run: python -m coverage report --fail-under=85
+      - run: python -m coverage json -o coverage.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sqlite-coverage-${{ matrix.python }}
+          path: coverage.json
+  mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci-only-password
+          MYSQL_DATABASE: testchain
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot -pci-only-password"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    env:
+      DB_ENGINE: mysql
+      DB_NAME: testchain
+      DB_USER: root
+      DB_PASSWORD: ci-only-password
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3306"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: python manage.py migrate --noinput
+      - run: python manage.py collectstatic --noinput
+      - run: python -m coverage run manage.py test core.tests -v 2
+      - run: python -m coverage report --fail-under=85

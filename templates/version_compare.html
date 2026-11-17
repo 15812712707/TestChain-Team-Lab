@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="heading"><div><h1>版本质量对比</h1><p class="muted">对比每个有效用例在两个版本中的最新执行结果。</p></div></div>
+<section class="panel"><form method="get">{{ form.as_p }}<button class="button">对比版本</button></form></section>
+{% if counts != None %}
+<div class="stats"><div class="panel"><span>回归风险</span><strong>{{ counts.regressed }}</strong></div><div class="panel"><span>已改善</span><strong class="green">{{ counts.improved }}</strong></div><div class="panel"><span>其他状态变化</span><strong>{{ counts.changed }}</strong></div><div class="panel"><span>无变化</span><strong>{{ counts.unchanged }}</strong></div></div>
+<p class="muted">回归风险：通过变为失败或阻塞；已改善：失败或阻塞变为通过。未执行单独标记，不算通过或失败。</p>
+<section class="panel table-panel"><table><thead><tr><th>用例</th><th>基准版本</th><th>对比版本</th><th>变化</th></tr></thead><tbody>{% for row in page_obj %}<tr><td>TC-{{ row.case.id }} {{ row.case.title }}</td><td>{{ row.before }}</td><td>{{ row.after }}</td><td><span class="badge {% if row.category == 'regressed' %}failed{% elif row.category == 'improved' %}passed{% endif %}">{{ row.label }}</span></td></tr>{% empty %}<tr><td colspan="4" class="empty">没有有效用例。</td></tr>{% endfor %}</tbody></table></section>{% include 'pagination.html' %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="heading"><div><h1>批量导入测试用例</h1><p class="muted">用表格准备用例，一次导入。任意一行出错时，整批不保存。</p></div><a class="button secondary" href="{% url 'case_template' project.id %}">下载 CSV 模板</a></div>
+<section class="panel form-panel"><form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button class="button">检查并导入</button></form></section>
+<section class="panel"><h2>填写规则</h2><p>保留模板中的英文表头 title、steps、expected、priority。前三列填写标题、步骤、预期结果，最后一列填写 high（高）、normal（中）或 low（低）。</p><p class="muted">保存为 UTF-8 CSV。标题不可与当前项目已有用例或同一文件内其他行重复，避免误操作造成重复数据。模板中的两行是填写示例，可替换为你的测试用例。</p></section>
+{% endblock %}
